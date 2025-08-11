@@ -7,6 +7,7 @@ from location.models import HealthFacility
 from core.apps import CoreConfig
 from django.utils.translation import gettext as _
 from django.core.exceptions import PermissionDenied
+from django.db import connection
 
 from .utils import prefix_filterset
 
@@ -180,6 +181,19 @@ class UserGQLType(DjangoObjectType):
             raise PermissionDenied(_("unauthorized"))
         user_mutation = self.mutations.select_related('mutation').filter(mutation__status=0).first()
         return user_mutation.mutation.client_mutation_id if user_mutation else None
+
+    # Safely resolve claim_admin to avoid database errors when the table is absent
+    def resolve_claim_admin(self, info, **kwargs):
+        try:
+            table_names = connection.introspection.table_names()
+            if 'tblClaimAdmin' not in table_names:
+                return None
+        except Exception:
+            return None
+        try:
+            return self.claim_admin
+        except Exception:
+            return None
 
 
 class PermissionOpenImisGQLType(graphene.ObjectType):
