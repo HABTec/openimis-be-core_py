@@ -190,6 +190,11 @@ class CoreConfig(AppConfig):
         CoreConfig.is_valid_health_facility_contract_required = cfg["is_valid_health_facility_contract_required"]
         CoreConfig.secondary_calendar = cfg["secondary_calendar"]
 
+    def set_dataloaders(self, dataloaders):
+        from .dataloaders import InteractiveUserLoader
+
+        dataloaders["interactive_user_loader"] = InteractiveUserLoader()
+
     def ready(self):
         from .models import ModuleConfiguration
         cfg = ModuleConfiguration.get_or_default(MODULE_NAME, DEFAULT_CFG)
