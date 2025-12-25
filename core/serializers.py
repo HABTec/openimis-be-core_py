@@ -34,8 +34,7 @@ class InteractiveUserSerializer(serializers.ModelSerializer):
                   'other_names', 'health_facility_id', 'rights', 'has_password')
 
 
-class TechnicalUserSerializer(CachedModelSerializer):
-    cache_ttl = 60 * 60
+class TechnicalUserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TechnicalUser
