@@ -3,7 +3,7 @@ import sys
 from django.apps import apps
 from django.db.models.signals import post_save, post_delete
 from contextlib import suppress
-from core.models.user import Officer, Role
+from core.models.user import Officer, Role, UserRole
 from django.core.cache import cache
 from django_redis.cache import RedisCache
 
@@ -21,6 +21,12 @@ def _post_save_rolerights_receiver(sender, instance, **kwargs):
             cache.delete("rights_*")
         else:
             cache.clear()
+
+@receiver([post_save, post_delete], sender=UserRole)
+def _post_save_user_role_receiver(sender, instance, **kwargs):
+    with suppress(AttributeError):
+        cache.delete(f"rights_{instance.user.id}")
+
         
 if 'claim' in sys.modules:
     ClaimAdmin = apps.get_model('core', 'ClaimAdmin')
