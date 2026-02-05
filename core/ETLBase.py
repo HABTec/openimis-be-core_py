@@ -18,8 +18,7 @@ class ETLBase(ABC):
 
     def _create_postgres_engine(self) -> Engine:
         user = os.environ.get("PSQL_DB_USER")
-        # password = os.environ.get("PSQL_DB_PASSWORD")
-        password = 'IMISuser%401234'
+        password = os.environ.get("PSQL_DB_PASSWORD")
         host = os.environ.get("POSTGRES_HOST", "localhost")
         port = os.environ.get("PSQL_DB_PORT", "5432")
         db = os.environ.get("PSQL_DB_NAME")
